@@ -1,11 +1,18 @@
+export PATH="$PATH:/opt/nvim/"
+
+alias nvimrc="nvim ~/.config/nvim/init.vim"
+alias bashrc="nvim ~/.bashrc && source ~/.bashrc"
+alias conf="cd ~/.config/nvim/"
+
+alias aimat="conda activate aimat"
+alias base="conda activate base"
+alias code="cd ~/Schreibtisch/Master/al_pes_exploration/pes_explorer/ && aimat"
+alias ~="cd ~"
+alias ..="cd .."
+
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-#export GOOGLE_APPLICATION_CREDENTIALS="/home/kevinsteiner/.ssh/google_secret.json"
-# Source ROOT only if it is intalled there
-test -f "root/bin/thisroot.sh" && source root/bin/thisroot.sh
-
-export PATH="~/go/bin:$PATH"
 
 # If not running interactively, don't do anything
 case $- in
@@ -21,8 +28,8 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=-1
+HISTFILESIZE=-1
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -61,14 +68,16 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
+parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] $(parse_git_branch) \$ '
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
 unset color_prompt force_color_prompt
-
-# If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*)
     PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
@@ -81,8 +90,6 @@ esac
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
-    alias gitlog='git log --pretty=oneline --graph'
-    alias glog='hg log -G'
     #alias dir='dir --color=auto'
     #alias vdir='vdir --color=auto'
 
@@ -101,8 +108,7 @@ alias l='ls -CF'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
-#alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
@@ -123,3 +129,20 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/kevinsteiner/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/kevinsteiner/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/kevinsteiner/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/kevinsteiner/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+export PATH="$PATH:/opt/nvim/"
